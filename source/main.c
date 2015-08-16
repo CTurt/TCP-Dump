@@ -8,7 +8,7 @@
 #endif
 
 #define PORT 9023
-#define SIZE 0x10000
+#define SIZE 0x1000
 #define OUTPUT "dump.bin"
 
 char buffer[SIZE];
@@ -38,13 +38,17 @@ int main(void) {
 	while(1) {
 		client = accept(server,(struct sockaddr *)&clientAddress, &clientLength);
 		
-		length = recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr *)&clientAddress, &clientLength);
+		f = fopen(OUTPUT, "wb");
+		
+		while((length = recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr *)&clientAddress, &clientLength))) {
+			fwrite(buffer, length, 1, f);
+			printf("Packet\n");
+		}
+		
 		//sendto(client, buffer, length, 0, (struct sockaddr *)&clientAddress, sizeof(clientAddress));
 		
 		closesocket(client);
 		
-		f = fopen(OUTPUT, "wb");
-		fwrite(buffer, length, 1, f);
 		fclose(f);
 		
 		printf("Dumped\n");
