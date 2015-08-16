@@ -7,7 +7,11 @@
 	#define WINVER 0x0500
 #endif
 
-char buffer[0x10000];
+#define PORT 9023
+#define SIZE 0x10000
+#define OUTPUT "dump.bin"
+
+char buffer[SIZE];
 int length;
 
 int main(void) {
@@ -25,7 +29,7 @@ int main(void) {
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-	serverAddress.sin_port = htons(9023);
+	serverAddress.sin_port = htons(PORT);
 	
 	bind(server, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
 	
@@ -39,7 +43,7 @@ int main(void) {
 		
 		closesocket(client);
 		
-		f = fopen("dump.bin", "wb");
+		f = fopen(OUTPUT, "wb");
 		fwrite(buffer, length, 1, f);
 		fclose(f);
 		
