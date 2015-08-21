@@ -35,6 +35,8 @@ int main(void) {
 	
 	listen(server, SOMAXCONN);
 	
+	printf("Listening\n");
+	
 	while(1) {
 		client = accept(server,(struct sockaddr *)&clientAddress, &clientLength);
 		
@@ -42,16 +44,20 @@ int main(void) {
 		
 		while((length = recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr *)&clientAddress, &clientLength))) {
 			fwrite(buffer, length, 1, f);
-			printf("Packet\n");
+			
+			if(length < 64) {
+				printf("%.*s\n", length, buffer);
+			}
+			else {
+				printf("Packet\n");
+			}
 		}
-		
-		//sendto(client, buffer, length, 0, (struct sockaddr *)&clientAddress, sizeof(clientAddress));
 		
 		closesocket(client);
 		
 		fclose(f);
 		
-		printf("Dumped\n");
+		printf("Done\n");
 	}
 	
 	WSACleanup();
