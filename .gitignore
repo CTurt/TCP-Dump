@@ -1,3 +1,4 @@
 build/
-*.exe
+TCP-Dump.exe
+TCP-Dump
 dump.bin

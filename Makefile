@@ -4,7 +4,7 @@ SDIR	:=	source
 IDIR	:=	-Iinclude
 LDIR	:=	lib
 CFLAGS	:=	$(IDIR) -fms-extensions -std=c11 -O2 -Wall
-LFLAGS	:=	-L$(LDIR) -lws2_32
+LFLAGS	:=	-L$(LDIR)
 CFILES	:=	$(wildcard $(SDIR)/*.c)
 OBJS	:=	$(patsubst $(SDIR)/%.c, build/%.o, $(wildcard $(SDIR)/*.c))
 
@@ -20,6 +20,7 @@ endif
 
 ifeq ($(findstring MINGW,$(PLATFORM)), MINGW)
 	TARGET = $(shell basename $(CURDIR)).exe
+	LFLAGS = $(LFLAGS) -lws2_32
 endif
 
 $(TARGET): $(ODIR) $(OBJS)

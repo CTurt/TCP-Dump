@@ -1,7 +1,17 @@
 #include <stdio.h>
+#include <string.h>
 
-#include <windows.h>
-#include <winsock.h>
+#ifdef __linux__
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <unistd.h>
+#endif
+
+#ifndef __linux__
+	#include <windows.h>
+	#include <winsock.h>
+#endif
 
 #ifndef WINVER
 	#define WINVER 0x0500
@@ -19,11 +29,13 @@ int main(void) {
 	
 	int server, client;
 	struct sockaddr_in serverAddress, clientAddress;
-	int clientLength = sizeof(clientAddress);
+	socklen_t clientLength = sizeof(clientAddress);
 	
-	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
-	
+	#ifndef __linux__
+		WSADATA wsaData;
+		WSAStartup(MAKEWORD(2, 2), &wsaData);
+	#endif
+
 	server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
 	memset(&serverAddress, 0, sizeof(serverAddress));
@@ -38,7 +50,7 @@ int main(void) {
 	printf("Listening\n");
 	
 	while(1) {
-		client = accept(server,(struct sockaddr *)&clientAddress, &clientLength);
+		client = accept(server, (struct sockaddr *)&clientAddress, &clientLength);
 		
 		f = fopen(OUTPUT, "wb");
 		
@@ -53,14 +65,22 @@ int main(void) {
 			}
 		}
 		
-		closesocket(client);
-		
+		#ifdef __linux__
+			close(client);
+		#endif
+
+		#ifndef __linux__
+			closesocket(client);
+		#endif
+
 		fclose(f);
 		
 		printf("Done\n");
 	}
 	
-	WSACleanup();
-	
+	#ifndef __linux__
+		WSACleanup();
+	#endif
+
 	return 0;
 }
