@@ -51,17 +51,19 @@ int main(void) {
 	
 	while(1) {
 		client = accept(server, (struct sockaddr *)&clientAddress, &clientLength);
-		
+		printf("Connected\n");
+
 		f = fopen(OUTPUT, "wb");
 		
 		while((length = recvfrom(client, buffer, sizeof(buffer), 0, (struct sockaddr *)&clientAddress, &clientLength))) {
 			fwrite(buffer, length, 1, f);
+			fflush(f);
 			
 			if(length < 64) {
 				printf("%.*s\n", length, buffer);
 			}
 			else {
-				printf("Packet\n");
+				printf("Packet %d\n", length);
 			}
 		}
 		
