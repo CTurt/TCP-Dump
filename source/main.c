@@ -8,9 +8,9 @@
 	#include <unistd.h>
 #endif
 
-#ifndef __linux__
+#ifndef _WIN32
 	#include <windows.h>
-	#include <winsock.h>
+	#include <winsock2.h>
 #endif
 
 #ifndef WINVER
@@ -31,7 +31,7 @@ int main(void) {
 	struct sockaddr_in serverAddress, clientAddress;
 	socklen_t clientLength = sizeof(clientAddress);
 	
-	#ifndef __linux__
+	#ifndef _WIN32
 		WSADATA wsaData;
 		WSAStartup(MAKEWORD(2, 2), &wsaData);
 	#endif
@@ -71,7 +71,7 @@ int main(void) {
 			close(client);
 		#endif
 
-		#ifndef __linux__
+		#ifndef _WIN32
 			closesocket(client);
 		#endif
 
@@ -80,7 +80,7 @@ int main(void) {
 		printf("Done\n");
 	}
 	
-	#ifndef __linux__
+	#ifndef _WIN32
 		WSACleanup();
 	#endif
 
